@@ -51,3 +51,92 @@ function sendMail($to, $subject, $content)
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 }
+
+
+//* Kiểm tra phương thức post
+function isPost()
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        return true;
+    }
+    return false;
+}
+
+
+//* Kiểm tra phương thức get
+function isGet()
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        return true;
+    }
+    return false;
+}
+
+//* Lấy giá trị của phương thức POST, GET
+function getDataFromMethod()
+{
+    $bodyArray = [];
+    if (isGet()) {
+        //! Xử lí chuỗi trước khi hiển thị ra
+        //! Đọc key của mảng $_GET
+        if (!empty($_GET)) {
+            foreach ($_GET as $key => $value) {
+                $key = strip_tags($key);
+                if (is_array($value)) {
+                    $bodyArray = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                } else {
+                    $bodyArray = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                }
+            }
+        }
+    }
+
+    if (isPost()) {
+        //! Xử lí chuỗi trước khi hiển thị ra
+        //! Đọc key của mảng $_POST
+        if (!empty($_POST)) {
+            foreach ($_POST as $key => $value) {
+                $key = strip_tags($key);
+                if (is_array($value)) {
+                    $bodyArray = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                } else {
+                    $bodyArray = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                }
+            }
+        }
+    }
+
+    return $bodyArray;
+}
+
+//* Kiểm tra email
+function isValidateEmail($email)
+{
+    $checkEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
+    return $checkEmail;
+}
+
+//* Kiểm tra số nguyên 
+function isValidateNumberInt($number, $range = [])
+{
+    if (!empty($range)) {
+        $options = ['options' => $range];
+        $checkNumber = filter_var($number, FILTER_VALIDATE_INT, $options);
+    } else {
+        $checkNumber = filter_var($number, FILTER_VALIDATE_INT);
+    }
+    return $checkNumber;
+}
+
+
+//* Kiểm tra số thục
+function isValidateNumberFloat($number, $range = [])
+{
+    if (!empty($range)) {
+        $options = ['options' => $range];
+        $checkNumber = filter_var($number, FILTER_VALIDATE_FLOAT, $options);
+    } else {
+        $checkNumber = filter_var($number, FILTER_VALIDATE_FLOAT);
+    }
+    return $checkNumber;
+}
